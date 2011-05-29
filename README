@@ -1,0 +1,15 @@
+Interactive Bash Utilities
+==========================
+
+prompt.sh: A prompt with return code visualization and error description
+ssh.sh: Allows sharing ssh keys across different bash sessions via ssh-agent
+man.sh: Colorful man pages
+
+Usage
+-----
+Just source the files from your .bashrc:
+. ~/bash-utils/prompt.sh
+. ~/bash-utils/ssh.sh
+. ~/bash-utils/man.sh
+
+More to come!.. (hopefully)
