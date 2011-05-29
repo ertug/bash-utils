@@ -20,7 +20,7 @@ function set_prompt {
 	local lgray="\[\033[0;37m\]"
 	local white="\[\033[1;37m\]"
 
-	trap '_last_cmd=$th_is_cmd; th_is_cmd=$BASH_COMMAND' DEBUG
+	trap '_last_cmd=$this_cmd; this_cmd=$BASH_COMMAND' DEBUG
 
 	function _is_cmd {
 		# FIXME: cannot get the last piped command if it is in a subshell
