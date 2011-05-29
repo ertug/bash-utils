@@ -1,15 +1,26 @@
 Interactive Bash Utilities
 ==========================
 
-prompt.sh: A prompt with return code visualization and error description
-ssh.sh: Allows sharing ssh keys across different bash sessions via ssh-agent
+Provides sane defaults for productive interactive Bash usage.
+
+
+Files
+-----
+prompt.sh: A minimal prompt with return code visualization and error description
+history.sh: History utilities
+ssh.sh: SSH utilities
 man.sh: Colorful man pages
+misc.sh: Miscellaneous utilities
 
 Usage
 -----
 Just source the files from your .bashrc:
 . ~/bash-utils/prompt.sh
+. ~/bash-utils/history.sh
 . ~/bash-utils/ssh.sh
 . ~/bash-utils/man.sh
+. ~/bash-utils/misc.sh
 
-More to come!.. (hopefully)
+Authors
+-------
+Ertug Karamatli <ertug@karamatli.com>

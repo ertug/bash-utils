@@ -1,5 +1,7 @@
-# Colorful man pages (CLUG-Wiki style)
+# Colorful man pages
 # Ertug Karamatli <ertug@karamatli.com>
+
+# http://wiki.clug.org.za/wiki/Colour_on_the_command_line
 
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'

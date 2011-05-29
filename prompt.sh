@@ -1,4 +1,4 @@
-# A prompt with return code visualization and error description
+# A minimal prompt with return code visualization and error description
 # Ertug Karamatli <ertug@karamatli.com>
 
 function set_prompt {
@@ -20,20 +20,20 @@ function set_prompt {
 	local lgray="\[\033[0;37m\]"
 	local white="\[\033[1;37m\]"
 
-	trap '_last_cmd=$this_cmd; this_cmd=$BASH_COMMAND' DEBUG
+	trap '_last_cmd=$th_is_cmd; th_is_cmd=$BASH_COMMAND' DEBUG
 
-	function is_cmd {
+	function _is_cmd {
 		# FIXME: cannot get the last piped command if it is in a subshell
 		echo $_last_cmd | tr '|' '\n' | tail -n1 | grep -q "^ *$1"
 		echo $?
 	}
 
-	function lookup_retcode {
+	function _lookup_retcode {
 		local res
 		local c
 
 		# error descriptions of these commands are taken from respective man pages
-		if [ $(is_cmd 'grep') -eq 0 ]; then
+		if [ $(_is_cmd 'grep') -eq 0 ]; then
 			c='grep'
 			if [ $1 -eq 1 ]; then
 				res='not found'
@@ -42,7 +42,7 @@ function set_prompt {
 			fi
 		fi
 
-		if [ $(is_cmd 'diff') -eq 0 ]; then
+		if [ $(_is_cmd 'diff') -eq 0 ]; then
 			c='diff'
 			if [ $1 -eq 1 ]; then
 				res='files are different'
@@ -51,7 +51,7 @@ function set_prompt {
 			fi
 		fi
 
-		if [ $(is_cmd 'ls') -eq 0 ]; then
+		if [ $(_is_cmd 'ls') -eq 0 ]; then
 			c='ls'
 			if [ $1 -eq 1 ]; then
 				res='minor problems (e.g., cannot access subdirectory)'
@@ -60,7 +60,7 @@ function set_prompt {
 			fi
 		fi
 
-		if [ $(is_cmd 'wget') -eq 0 ]; then
+		if [ $(_is_cmd 'wget') -eq 0 ]; then
 			c='wget'
 			if [ $1 -eq 1 ]; then
 				res='Generic error'
@@ -81,7 +81,7 @@ function set_prompt {
 			fi
 		fi
 
-		if [ $(is_cmd 'ping') -eq 0 ]; then
+		if [ $(_is_cmd 'ping') -eq 0 ]; then
 			c='ping'
 			if [ $1 -eq 1 ]; then
 				res='no reply'
@@ -90,7 +90,7 @@ function set_prompt {
 			fi
 		fi
 
-		if [ $(is_cmd 'mount') -eq 0 -o $(is_cmd 'umount') -eq 0 ]; then
+		if [ $(_is_cmd 'mount') -eq 0 -o $(_is_cmd 'umount') -eq 0 ]; then
 			c='mount'
 			if [ $(($1 & 1)) -ne 0 ]; then
 				res='incorrect invocation or permissions'
@@ -109,14 +109,14 @@ function set_prompt {
 			fi
 		fi
 
-		if [ $(is_cmd 'ssh') -eq 0 ]; then
+		if [ $(_is_cmd 'ssh') -eq 0 ]; then
 			c='ssh'
 			if [ $1 -eq 255 ]; then
 				res='error occured'
 			fi
 		fi
 
-		if [ $(is_cmd 'man') -eq 0 ]; then
+		if [ $(_is_cmd 'man') -eq 0 ]; then
 			c='man'
 			if [ $1 -eq 1 ]; then
 				res='Usage, syntax or configuration file error.'
@@ -159,19 +159,16 @@ function set_prompt {
 		fi
 	}
 
-	function prompt_cmd {
+	function _prompt_cmd {
 		_last_code=$?
-		if [ "$_last_cmd" == "prompt_cmd" ]; then
-			# hack to clear last error ( : doesn't work)
-			_last_code=0
-		fi
-		history -a
+		# FIXME: clear last error ( : doesn't work)
 	}
-	PROMPT_COMMAND=prompt_cmd
+	export PROMPT_COMMAND=_prompt_cmd
 
-	_last_code_msg='$([ $_last_code -ne 0 ] && echo -ne "*** Return code: $_last_code ($(lookup_retcode $_last_code)) ***")'
+	_last_code_msg='$([ $_last_code -ne 0 ] && echo -ne "*** Return code: $_last_code ($(_lookup_retcode $_last_code)) ***")'
 	# TODO: make prompt configurable
-	PS1="${red}${_last_code_msg}\n${green}[${lgreen}\u@\h${green}:${lblue}\w${green}|${blue}\t${green}]${normal} "
+	export PS1="${red}${_last_code_msg}\n${green}[${lgreen}\u@\h${green}:${lblue}\w${green}|${blue}\t${green}]${normal} "
 }
+
 
 set_prompt
